@@ -1,0 +1,215 @@
+version: '2.1'
+
+services:
+  r1:
+    build: .
+    volumes:
+      - ./volumes/quagga/r1/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r1/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r1/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10011:2601
+      #ospf
+      - 10012:2604
+      #ospf ipv6
+      - 10013:2606
+    networks:
+      n1:
+        ipv4_address: 192.168.1.11
+        # ipv6_address: ::
+      n3:
+        ipv4_address: 192.168.3.11  
+  r2:
+    build: .
+    volumes:
+      - ./volumes/quagga/r2/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r2/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r2/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10021:2601
+      #ospf
+      - 10022:2604
+      #ospf ipv6
+      - 10024:2606
+    networks:
+      n1:
+        ipv4_address: 192.168.1.12
+      n2:
+        ipv4_address: 192.168.2.12
+      n4:
+        ipv4_address: 192.168.4.12
+  r3:
+    build: .
+    volumes:
+      - ./volumes/quagga/r3/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r3/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r3/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10031:2601
+      #ospf
+      - 10032:2604
+      #ospf ipv6
+      - 10033:2606
+    networks:
+      n3:
+        ipv4_address: 192.168.3.13
+      n4:
+        ipv4_address: 192.168.4.13
+      n5:
+        ipv4_address: 192.168.5.13
+      n8:      
+        ipv4_address: 192.168.8.13
+  r4:
+    build: .
+    volumes:
+      - ./volumes/quagga/r4/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10041:2601
+      #ospf
+      - 10042:2604
+      #ospf ipv6
+      - 10043:2606
+    networks:
+      n7:
+        ipv4_address: 192.168.7.14
+      n8:
+        ipv4_address: 192.168.8.14
+      n9:
+        ipv4_address: 192.168.9.14
+  r5:
+    build: .
+    volumes:
+      - ./volumes/quagga/r5/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r5/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r5/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10051:2601
+      #ospf
+      - 10052:2604
+      #ospf ipv6
+      - 10053:2606
+    networks:
+      n5:
+        ipv4_address: 192.168.5.15
+      n6:
+        ipv4_address: 192.168.6.15
+      n9:
+        ipv4_address: 192.168.9.15
+
+# hosts
+  h1:
+    image: alpine
+    privileged: true # supongo
+    command: top
+    networks:
+      n2:
+        ipv4_address: 192.168.2.10
+  h2:
+    image: alpine
+    privileged: true # supongo
+    command: top
+    networks:
+      n2:
+        ipv4_address: 192.168.2.11
+  h3:
+    image: alpine
+    privileged: true # supongo
+    command: top
+    networks:
+      n2:
+        ipv4_address: 192.168.2.13
+  h4:
+    image: alpine
+    privileged: true
+    command: top
+    networks:
+      n7:
+        ipv4_address: 192.168.7.10
+  h5:
+    image: alpine
+    privileged: true
+    command: top
+    networks:
+      n6:
+        ipv4_address: 192.168.6.10
+
+networks:
+  n1:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.1.0/24
+  n2:      
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.2.0/24
+           gateway: 192.168.2.12
+  n3:      
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.3.0/24
+  n4:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.4.0/24
+  n5:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.5.0/24
+  n6:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.6.0/24
+           gateway: 192.168.6.15
+  n7:  
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.7.0/24
+           gateway: 192.168.7.14
+  n8:  
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.8.0/24
+  n9:  
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.9.0/24
