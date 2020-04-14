@@ -19,10 +19,10 @@ services:
       - 10013:2606
     networks:
       n1:
-        ipv4_address: 192.168.1.11
+        ipv4_address: 192.108.1.11 # Conecta R2
         # ipv6_address: ::
       n3:
-        ipv4_address: 192.168.3.11  
+        ipv4_address: 192.108.3.11  # Conecta R3
   r2:
     build: .
     volumes:
@@ -41,11 +41,11 @@ services:
       - 10024:2606
     networks:
       n1:
-        ipv4_address: 192.168.1.12
+        ipv4_address: 192.108.1.12 # Conecta R1
       n2:
-        ipv4_address: 192.168.2.12
+        ipv4_address: 192.108.2.12 # Conecta a H1, H2, H3
       n4:
-        ipv4_address: 192.168.4.12
+        ipv4_address: 192.108.4.12 # Conecta R3
   r3:
     build: .
     volumes:
@@ -64,13 +64,13 @@ services:
       - 10033:2606
     networks:
       n3:
-        ipv4_address: 192.168.3.13
+        ipv4_address: 192.108.3.13 # Conecta R1
       n4:
-        ipv4_address: 192.168.4.13
+        ipv4_address: 192.108.4.13 # Conecta R2
       n5:
-        ipv4_address: 192.168.5.13
+        ipv4_address: 192.108.5.13 # Conecta R5
       n8:      
-        ipv4_address: 192.168.8.13
+        ipv4_address: 192.108.8.13 # Conecta R4
   r4:
     build: .
     volumes:
@@ -89,11 +89,11 @@ services:
       - 10043:2606
     networks:
       n7:
-        ipv4_address: 192.168.7.14
+        ipv4_address: 192.108.7.14 # Conecta H4
       n8:
-        ipv4_address: 192.168.8.14
+        ipv4_address: 192.108.8.14 # Conecta R4
       n9:
-        ipv4_address: 192.168.9.14
+        ipv4_address: 192.108.9.14 # Conecta R5
   r5:
     build: .
     volumes:
@@ -112,48 +112,58 @@ services:
       - 10053:2606
     networks:
       n5:
-        ipv4_address: 192.168.5.15
+        ipv4_address: 192.108.5.15 # Conecta R3
       n6:
-        ipv4_address: 192.168.6.15
+        ipv4_address: 192.108.6.15 # conecta H5
       n9:
-        ipv4_address: 192.168.9.15
+        ipv4_address: 192.108.9.15 # Conecta R4
 
 # hosts
   h1:
+    volumes: 
+      - './volumes/hosts/h1_networks:/etc/network/interfaces:ro'
     image: alpine
     privileged: true # supongo
-    command: top
+    command:  ash -c "ip route del default && ip route add default via 192.108.2.12 && top"
     networks:
       n2:
-        ipv4_address: 192.168.2.10
+        ipv4_address: 192.108.2.10
   h2:
+    volumes: 
+      - './volumes/hosts/h2_networks:/etc/network/interfaces:ro'
     image: alpine
     privileged: true # supongo
-    command: top
+    command: ash -c "ip route del default && ip route add default via 192.108.2.12 && top"
     networks:
       n2:
-        ipv4_address: 192.168.2.11
+        ipv4_address: 192.108.2.11
   h3:
+    volumes: 
+      - './volumes/hosts/h3_networks:/etc/network/interfaces:ro'
     image: alpine
     privileged: true # supongo
-    command: top
+    command: ash -c "ip route del default && ip route add default via 192.108.2.12 && top"
     networks:
       n2:
-        ipv4_address: 192.168.2.13
+        ipv4_address: 192.108.2.13
   h4:
+    volumes: 
+      - './volumes/hosts/h4_networks:/etc/network/interfaces:ro'
     image: alpine
     privileged: true
-    command: top
+    command: ash -c "ip route del default && ip route add default via 192.108.7.14 && top"
     networks:
       n7:
-        ipv4_address: 192.168.7.10
+        ipv4_address: 192.108.7.10
   h5:
+    volumes: 
+      - './volumes/hosts/h5_networks:/etc/network/interfaces:ro'
     image: alpine
     privileged: true
-    command: top
+    command: ash -c "ip route del default && ip route add default via 192.108.6.15 && top"
     networks:
       n6:
-        ipv4_address: 192.168.6.10
+        ipv4_address: 192.108.6.10
 
 networks:
   n1:
@@ -161,55 +171,55 @@ networks:
     ipam:
         driver: default
         config:
-         - subnet: 192.168.1.0/24
+         - subnet: 192.108.1.0/24
   n2:      
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.2.0/24
-           gateway: 192.168.2.12
+         - subnet: 192.108.2.0/24
+           gateway: 192.108.2.12
   n3:      
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.3.0/24
+         - subnet: 192.108.3.0/24
   n4:
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.4.0/24
+         - subnet: 192.108.4.0/24
   n5:
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.5.0/24
+         - subnet: 192.108.5.0/24
   n6:
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.6.0/24
-           gateway: 192.168.6.15
+         - subnet: 192.108.6.0/24
+           gateway: 192.108.6.15
   n7:  
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.7.0/24
-           gateway: 192.168.7.14
+         - subnet: 192.108.7.0/24
+           gateway: 192.108.7.14
   n8:  
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.8.0/24
+         - subnet: 192.108.8.0/24
   n9:  
     driver: "bridge"
     ipam:
         driver: default
         config:
-         - subnet: 192.168.9.0/24
+         - subnet: 192.108.9.0/24
