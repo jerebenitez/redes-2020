@@ -178,7 +178,6 @@ networks:
         driver: default
         config:
          - subnet: 192.108.2.0/24
-           gateway: 192.108.2.12
   n3:      
     driver: "bridge"
     ipam:
@@ -203,14 +202,12 @@ networks:
         driver: default
         config:
          - subnet: 192.108.6.0/24
-           gateway: 192.108.6.15
   n7:  
     driver: "bridge"
     ipam:
         driver: default
         config:
          - subnet: 192.108.7.0/24
-           gateway: 192.108.7.14
   n8:  
     driver: "bridge"
     ipam:
