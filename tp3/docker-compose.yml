@@ -16,6 +16,8 @@ services:
       - 10011:2601
       #ospf
       - 10012:2604
+      # bgp
+      - 10014:2605
       #ospf ipv6
       - 10013:2606
     networks:
@@ -88,6 +90,8 @@ services:
       - 10041:2601
       #ospf
       - 10042:2604
+      # bgp
+      - 10044:2605
       #ospf ipv6
       - 10043:2606
     networks:
@@ -112,6 +116,8 @@ services:
       - 10051:2601
       #ospf
       - 10052:2604
+      # bgp
+      - 10054:2605
       #ospf ipv6
       - 10053:2606
     networks:
