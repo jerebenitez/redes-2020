@@ -7,6 +7,7 @@ services:
       - ./volumes/quagga/r1/zebra.conf:/etc/quagga/zebra.conf:ro
       - ./volumes/quagga/r1/ospfd.conf:/etc/quagga/ospfd.conf:ro
       - ./volumes/quagga/r1/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/quagga/r1/bgpd.conf:/etc/quagga/bgpd.conf:ro
       - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
     image: ospf:20190321
     privileged: true
@@ -22,6 +23,10 @@ services:
         ipv4_address: 192.168.1.11 # Conecta R2
       n101s5:
         ipv4_address: 192.168.5.11 # Conecta R3
+      common1:
+        ipv4_address: 192.168.8.11 # Conecta R4
+      common3:
+        ipv4_address: 192.168.10.11 # Conecta R5
   r2:
     build: .
     volumes:
@@ -74,6 +79,7 @@ services:
       - ./volumes/quagga/r4/zebra.conf:/etc/quagga/zebra.conf:ro
       - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
       - ./volumes/quagga/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/quagga/r4/bgpd.conf:/etc/quagga/bgpd.conf:ro
       - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
     image: ospf:20190321
     privileged: true
@@ -87,12 +93,17 @@ services:
     networks:
       n102s6:
         ipv4_address: 192.168.6.14 # Conecta H2
+      common1:
+        ipv4_address: 192.168.8.14 # Conecta R1
+      common2:
+        ipv4_address: 192.168.9.14 # conecta R5
   r5:
     build: .
     volumes:
       - ./volumes/quagga/r5/zebra.conf:/etc/quagga/zebra.conf:ro
       - ./volumes/quagga/r5/ospfd.conf:/etc/quagga/ospfd.conf:ro
       - ./volumes/quagga/r5/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/quagga/r5/bgpd.conf:/etc/quagga/bgpd.conf:ro
       - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
     image: ospf:20190321
     privileged: true
@@ -106,6 +117,10 @@ services:
     networks:
       n103s7:
         ipv4_address: 192.168.7.15 # Conecta H3
+      common2:
+        ipv4_address: 192.168.9.15 # Conecta R4
+      common3:
+        ipv4_address: 192.168.10.15 # Conecta R1
 
 # hosts
   h1:
@@ -177,17 +192,36 @@ networks:
         config:
          - subnet: 192.168.5.0/24
   # redes de AS102
-    n102s6:
-      driver: "bridge"
-      ipam:
-        driver: default
-        config:
-          - subnet: 192.168.6.0/24
+  n102s6:
+    driver: "bridge"
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.6.0/24
   # redes de AS103
-    n103s7:
-      driver: "bridge"
-      ipam:
-        driver: default
-        config:
-          - subnet: 192.168.7.0/24
+  n103s7:
+    driver: "bridge"
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.7.0/24
 
+  # redes comunes
+  common1:
+    driver: "bridge"
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.8.0/24
+  common2:
+    driver: "bridge"
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.9.0/24
+  common3:
+    driver: "bridge"
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
