@@ -82,11 +82,9 @@ services:
 
 #services
   webserver:
-    image: nginx
+    image: httpd:alpine
     volumes:
-      - './volumes/static/html:/usr/share/nginx/html:ro'
-    environment:
-      - NGINX_PORT=80
+      - './volumes/static/html:/usr/local/apache2/htdocs:ro'
     privileged: true
     ports:
       - 10180:80
