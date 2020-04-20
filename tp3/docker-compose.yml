@@ -68,6 +68,25 @@ services:
         ipv4_address: 192.168.4.13 # Conecta R2
       n101s5:
         ipv4_address: 192.168.5.13 # Conecta R1
+  r4:
+    build: .
+    volumes:
+      - ./volumes/quagga/r4/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10041:2601
+      #ospf
+      - 10042:2604
+      #ospf ipv6
+      - 10043:2606
+    networks:
+      n102s6:
+        ipv4_address: 192.168.6.14 # Conecta H2
 
 # hosts
   h1:
@@ -79,6 +98,13 @@ services:
     networks:
       n101s3:
         ipv4_address: 192.168.3.20
+  h2:
+    image: alpine
+    privileged: true
+    command: ash -c "ip route del default && ip route add default via 192.168.6.14 && top"
+    networks:
+      n102s6:
+        ipv4_address: 192.168.6.20
 
 #services
   webserver:
@@ -93,6 +119,7 @@ services:
         ipv4_address: 192.168.2.20
 
 networks:
+  # redes de AS101
   n101s1:
     driver: "bridge"
     ipam:
@@ -123,3 +150,11 @@ networks:
         driver: default
         config:
          - subnet: 192.168.5.0/24
+  # redes de AS102
+    n102s6:
+      driver: "bridge"
+      ipam:
+        driver: default
+        config:
+          - subnet: 192.168.6.0/24
+
