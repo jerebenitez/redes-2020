@@ -1,0 +1,127 @@
+version: '2.1'
+
+services:
+  r1:
+    build: .
+    volumes:
+      - ./volumes/quagga/r1/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r1/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r1/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10011:2601
+      #ospf
+      - 10012:2604
+      #ospf ipv6
+      - 10013:2606
+    networks:
+      n101s1:
+        ipv4_address: 192.168.1.11 # Conecta R2
+      n101s5:
+        ipv4_address: 192.168.5.11 # Conecta R3
+  r2:
+    build: .
+    volumes:
+      - ./volumes/quagga/r2/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r2/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r2/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10021:2601
+      #ospf
+      - 10022:2604
+      #ospf ipv6
+      - 10024:2606
+    networks:
+      n101s1:
+        ipv4_address: 192.168.1.12 # Conecta R1
+      n101s2:
+        ipv4_address: 192.168.2.12 # Conecta Web Server
+      n101s4:
+        ipv4_address: 192.168.4.12 # Conecta R3
+  r3:
+    build: .
+    volumes:
+      - ./volumes/quagga/r3/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r3/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/quagga/r3/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10031:2601
+      #ospf
+      - 10032:2604
+      #ospf ipv6
+      - 10033:2606
+    networks:
+      n101s3:
+        ipv4_address: 192.168.3.13 # Conecta H1
+      n101s4:
+        ipv4_address: 192.168.4.13 # Conecta R2
+      n101s5:
+        ipv4_address: 192.168.5.13 # Conecta R1
+
+# hosts
+  h1:
+    volumes: 
+      - './volumes/hosts/h1_networks:/etc/network/interfaces:ro'
+    image: alpine
+    privileged: true 
+    command:  ash -c "ip route del default && ip route add default via 192.168.3.13 && top"
+    networks:
+      n101s3:
+        ipv4_address: 192.168.3.20
+
+#services
+  webserver:
+    image: nginx
+    volumes:
+      - './volumes/static/html:/usr/share/nginx/html:ro'
+    environment:
+      - NGINX_PORT=80
+    privileged: true
+    ports:
+      - 10180:80
+    networks:
+      n101s2:
+        ipv4_address: 192.168.2.20
+
+networks:
+  n101s1:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.1.0/24
+  n101s2:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.2.0/24
+  n101s3:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.3.0/24
+  n101s4:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.4.0/24
+  n101s5:
+    driver: "bridge"
+    ipam:
+        driver: default
+        config:
+         - subnet: 192.168.5.0/24
