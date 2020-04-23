@@ -9,26 +9,32 @@ services:
       - ./volumes/quagga/r1/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
       - ./volumes/quagga/r1/bgpd.conf:/etc/quagga/bgpd.conf:ro
       - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
-    image: ospf:20190321
+    image: bgp:20180508
     privileged: true
     ports:
       #admin
       - 10011:2601
       #ospf
       - 10012:2604
-      # bgp
-      - 10014:2605
       #ospf ipv6
       - 10013:2606
+      #bgp
+      - 10014:2605
     networks:
-      n101s1:
-        ipv4_address: 192.168.1.11 # Conecta R2
-      n101s5:
-        ipv4_address: 192.168.5.11 # Conecta R3
-      common1:
-        ipv4_address: 192.168.8.11 # Conecta R4
-      common3:
-        ipv4_address: 192.168.10.11 # Conecta R5
+      oam1:
+        ipv4_address: 192.168.10.11
+        ipv6_address: 2001:aaaa:bbbb:1::11
+      oam2:
+        ipv4_address: 192.168.2.11
+        ipv6_address: 2001:aaaa:bbbb:2::11
+      oam3:
+        ipv4_address: 192.168.3.11
+        ipv6_address: 2001:aaaa:bbbb:3::11
+      oam4:
+        ipv4_address: 192.168.4.11
+        ipv6_address: 2001:aaaa:bbbb:4::11
+     
+          
   r2:
     build: .
     volumes:
@@ -44,14 +50,18 @@ services:
       #ospf
       - 10022:2604
       #ospf ipv6
-      - 10024:2606
+      - 10023:2606
     networks:
-      n101s1:
-        ipv4_address: 192.168.1.12 # Conecta R1
-      n101s2:
-        ipv4_address: 192.168.2.12 # Conecta Web Server
-      n101s4:
-        ipv4_address: 192.168.4.12 # Conecta R3
+      oam3:
+        ipv4_address: 192.168.3.12
+        ipv6_address: 2001:aaaa:bbbb:3::12
+      oam5:
+        ipv4_address: 192.168.5.13
+        ipv6_address: 2001:aaaa:bbbb:5::13
+      nr2:
+        ipv4_address: 172.16.2.12
+        ipv6_address: 2001:aaaa:bbbb:7::12
+            
   r3:
     build: .
     volumes:
@@ -63,171 +73,216 @@ services:
     privileged: true
     ports:
       #admin
-      - 10031:2601
+      - 10024:2601
       #ospf
-      - 10032:2604
+      - 10025:2604
       #ospf ipv6
-      - 10033:2606
+      - 10026:2606
     networks:
-      n101s3:
-        ipv4_address: 192.168.3.13 # Conecta H1
-      n101s4:
-        ipv4_address: 192.168.4.13 # Conecta R2
-      n101s5:
-        ipv4_address: 192.168.5.13 # Conecta R1
+      oam4:
+        ipv4_address: 192.168.4.12
+        ipv6_address: 2001:aaaa:bbbb:4::12
+      oam5:
+        ipv4_address: 192.168.5.12
+        ipv6_address: 2001:aaaa:bbbb:5::12
+      nr3:
+        ipv4_address: 172.16.3.12
+        ipv6_address: 2001:aaaa:bbbb:8::12
   r4:
     build: .
     volumes:
       - ./volumes/quagga/r4/zebra.conf:/etc/quagga/zebra.conf:ro
-      - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
-      - ./volumes/quagga/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+    #  - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
+    #  - ./volumes/quagga/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
       - ./volumes/quagga/r4/bgpd.conf:/etc/quagga/bgpd.conf:ro
       - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
-    image: ospf:20190321
+    image: bgp:20180508
     privileged: true
     ports:
       #admin
-      - 10041:2601
+      - 10055:2601
       #ospf
-      - 10042:2604
-      # bgp
-      - 10044:2605
+     # - 10028:2604
       #ospf ipv6
-      - 10043:2606
+     # - 10029:2606
+      #bgp
+      - 10056:2605
     networks:
-      n102s6:
-        ipv4_address: 192.168.6.14 # Conecta H2
-      common1:
-        ipv4_address: 192.168.8.14 # Conecta R1
-      common2:
-        ipv4_address: 192.168.9.14 # conecta R5
+      oam1:
+        ipv4_address: 192.168.10.12
+        ipv6_address: 2001:aaaa:bbbb:1::12
+      oam6:
+        ipv4_address: 192.168.6.11
+        ipv6_address: 2001:aaaa:bbbb:6::11
+      nr4:
+        ipv4_address: 172.16.4.12
+        ipv6_address: 2001:aaaa:bbbb:9::12
+  
   r5:
     build: .
     volumes:
       - ./volumes/quagga/r5/zebra.conf:/etc/quagga/zebra.conf:ro
-      - ./volumes/quagga/r5/ospfd.conf:/etc/quagga/ospfd.conf:ro
-      - ./volumes/quagga/r5/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
+     # - ./volumes/quagga/r5/ospfd.conf:/etc/quagga/ospfd.conf:ro
+     # - ./volumes/quagga/r5/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
       - ./volumes/quagga/r5/bgpd.conf:/etc/quagga/bgpd.conf:ro
       - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
-    image: ospf:20190321
+    image: bgp:20180508
     privileged: true
     ports:
       #admin
-      - 10051:2601
+      - 10030:2601
       #ospf
-      - 10052:2604
-      # bgp
-      - 10054:2605
+    #  - 10031:2604
       #ospf ipv6
-      - 10053:2606
+     # - 10032:2606
+      #bgp
+      - 10031:2605
     networks:
-      n103s7:
-        ipv4_address: 192.168.7.15 # Conecta H3
-      common2:
-        ipv4_address: 192.168.9.15 # Conecta R4
-      common3:
-        ipv4_address: 192.168.10.15 # Conecta R1
+      oam2:
+        ipv4_address: 192.168.2.12
+        ipv6_address: 2001:aaaa:bbbb:2::12
+      oam6:
+        ipv4_address: 192.168.6.12
+        ipv6_address: 2001:aaaa:bbbb:6::12
+      nr5:
+        ipv4_address: 172.16.5.12
+        ipv6_address: 2001:aaaa:bbbb:10::12
 
-# hosts
+#----------------------------------------
+
   h1:
-    volumes: 
-      - './volumes/hosts/h1_networks:/etc/network/interfaces:ro'
-    image: alpine
-    privileged: true 
-    command:  ash -c "ip route del default && ip route add default via 192.168.3.13 && top"
-    networks:
-      n101s3:
-        ipv4_address: 192.168.3.20
-  h2:
-    image: alpine
+    image: alpine:latest
+    command: top
     privileged: true
-    command: ash -c "ip route del default && ip route add default via 192.168.6.14 && top"
     networks:
-      n102s6:
-        ipv4_address: 192.168.6.20
-  h3:
-    image: alpine
-    privileged: true
-    command: ash -c "ip route del default && ip route add default via 192.168.7.15 && top"
-    networks:
-      n103s7:
-        ipv4_address: 192.168.7.20
+      nr3:
+         ipv4_address: 172.16.3.15
+         ipv6_address: 2001:aaaa:bbbb:8::13
 
-#services
-  webserver:
-    image: httpd:alpine
-    volumes:
-      - './volumes/static/html:/usr/local/apache2/htdocs:ro'
+        
+  h2:
+    image: alpine:latest
+    command: top
     privileged: true
-    ports:
-      - 10180:80
     networks:
-      n101s2:
-        ipv4_address: 192.168.2.20
+       nr4:
+         ipv4_address: 172.16.4.15
+         ipv6_address: 2001:aaaa:bbbb:9::13
+        
+  h3:
+    image: alpine:latest
+    command: top
+    privileged: true
+    networks:
+       nr5:
+         ipv4_address: 172.16.5.15   
+         ipv6_address: 2001:aaaa:bbbb:10::13
+  server1:
+    image: nginx:alpine
+    privileged: true
+    networks:
+       nr2:
+         ipv4_address: 172.16.2.15
+         ipv6_address: 2001:aaaa:bbbb:7::11
+  server2:
+    image: nginx:alpine 
+    privileged: true
+    networks:
+       nr2:
+         ipv4_address: 172.16.2.16
+         ipv6_address: 2001:aaaa:bbbb:7::13
+
+
+         
 
 networks:
-  # redes de AS101
-  n101s1:
+  oam1:
     driver: "bridge"
-    ipam:
-        driver: default
-        config:
-         - subnet: 192.168.1.0/24
-  n101s2:
-    driver: "bridge"
-    ipam:
-        driver: default
-        config:
-         - subnet: 192.168.2.0/24
-  n101s3:
-    driver: "bridge"
-    ipam:
-        driver: default
-        config:
-         - subnet: 192.168.3.0/24
-  n101s4:
-    driver: "bridge"
-    ipam:
-        driver: default
-        config:
-         - subnet: 192.168.4.0/24
-  n101s5:
-    driver: "bridge"
-    ipam:
-        driver: default
-        config:
-         - subnet: 192.168.5.0/24
-  # redes de AS102
-  n102s6:
-    driver: "bridge"
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.6.0/24
-  # redes de AS103
-  n103s7:
-    driver: "bridge"
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.7.0/24
-
-  # redes comunes
-  common1:
-    driver: "bridge"
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.8.0/24
-  common2:
-    driver: "bridge"
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.9.0/24
-  common3:
-    driver: "bridge"
+    enable_ipv6: true
     ipam:
       driver: default
       config:
         - subnet: 192.168.10.0/24
+        - subnet: 2001:aaaa:bbbb:1::0/64
+
+  oam2:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.2.0/24
+        - subnet: 2001:aaaa:bbbb:2::0/64
+  
+  oam3:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.3.0/24
+        - subnet: 2001:aaaa:bbbb:3::0/64
+
+  oam4:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.4.0/24
+        - subnet: 2001:aaaa:bbbb:4::0/64 
+  
+  oam5:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.5.0/24
+        - subnet: 2001:aaaa:bbbb:5::0/64
+  
+  oam6:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.6.0/24
+        - subnet: 2001:aaaa:bbbb:6::0/64 
+
+#-----------------------------------------------
+
+  nr2:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.2.0/24
+        - subnet: 2001:aaaa:bbbb:7::0/64
+  nr3:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.3.0/24
+        - subnet: 2001:aaaa:bbbb:8::0/64
+  
+  nr4:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.4.0/24
+        - subnet: 2001:aaaa:bbbb:9::0/64
+  nr5:
+    driver: "bridge"
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.5.0/24
+        - subnet: 2001:aaaa:bbbb:10::0/64
+
