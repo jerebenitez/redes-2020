@@ -8,7 +8,7 @@ services:
       - ./volumes/quagga/r1/ospfd.conf:/etc/quagga/ospfd.conf:ro
       - ./volumes/quagga/r1/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
       - ./volumes/quagga/r1/bgpd.conf:/etc/quagga/bgpd.conf:ro
-      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+      - ./volumes/supervisord_bgp.conf:/etc/supervisord.conf:ro
     image: bgp:20180508
     privileged: true
     ports:
@@ -56,8 +56,8 @@ services:
         ipv4_address: 192.168.3.12
         ipv6_address: 2001:aaaa:bbbb:3::12
       oam5:
-        ipv4_address: 192.168.5.13
-        ipv6_address: 2001:aaaa:bbbb:5::13
+        ipv4_address: 192.168.5.12
+        ipv6_address: 2001:aaaa:bbbb:5::12
       nr2:
         ipv4_address: 172.16.2.12
         ipv6_address: 2001:aaaa:bbbb:7::12
@@ -80,73 +80,61 @@ services:
       - 10026:2606
     networks:
       oam4:
-        ipv4_address: 192.168.4.12
-        ipv6_address: 2001:aaaa:bbbb:4::12
+        ipv4_address: 192.168.4.13
+        ipv6_address: 2001:aaaa:bbbb:4::13
       oam5:
-        ipv4_address: 192.168.5.12
-        ipv6_address: 2001:aaaa:bbbb:5::12
+        ipv4_address: 192.168.5.13
+        ipv6_address: 2001:aaaa:bbbb:5::13
       nr3:
-        ipv4_address: 172.16.3.12
-        ipv6_address: 2001:aaaa:bbbb:8::12
+        ipv4_address: 172.16.3.13
+        ipv6_address: 2001:aaaa:bbbb:8::13
   r4:
     build: .
     volumes:
       - ./volumes/quagga/r4/zebra.conf:/etc/quagga/zebra.conf:ro
-    #  - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
-    #  - ./volumes/quagga/r4/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
       - ./volumes/quagga/r4/bgpd.conf:/etc/quagga/bgpd.conf:ro
-      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+      - ./volumes/supervisord_bgp2.conf:/etc/supervisord.conf:ro
     image: bgp:20180508
     privileged: true
     ports:
       #admin
       - 10055:2601
-      #ospf
-     # - 10028:2604
-      #ospf ipv6
-     # - 10029:2606
       #bgp
       - 10056:2605
     networks:
       oam1:
-        ipv4_address: 192.168.10.12
-        ipv6_address: 2001:aaaa:bbbb:1::12
+        ipv4_address: 192.168.10.14
+        ipv6_address: 2001:aaaa:bbbb:1::14
       oam6:
-        ipv4_address: 192.168.6.11
-        ipv6_address: 2001:aaaa:bbbb:6::11
+        ipv4_address: 192.168.6.14
+        ipv6_address: 2001:aaaa:bbbb:6::14
       nr4:
-        ipv4_address: 172.16.4.12
-        ipv6_address: 2001:aaaa:bbbb:9::12
+        ipv4_address: 172.16.4.14
+        ipv6_address: 2001:aaaa:bbbb:9::14
   
   r5:
     build: .
     volumes:
       - ./volumes/quagga/r5/zebra.conf:/etc/quagga/zebra.conf:ro
-     # - ./volumes/quagga/r5/ospfd.conf:/etc/quagga/ospfd.conf:ro
-     # - ./volumes/quagga/r5/ospf6d.conf:/etc/quagga/ospf6d.conf:ro
       - ./volumes/quagga/r5/bgpd.conf:/etc/quagga/bgpd.conf:ro
-      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+      - ./volumes/supervisord_bgp2.conf:/etc/supervisord.conf:ro
     image: bgp:20180508
     privileged: true
     ports:
       #admin
       - 10030:2601
-      #ospf
-    #  - 10031:2604
-      #ospf ipv6
-     # - 10032:2606
       #bgp
       - 10031:2605
     networks:
       oam2:
-        ipv4_address: 192.168.2.12
-        ipv6_address: 2001:aaaa:bbbb:2::12
+        ipv4_address: 192.168.2.15
+        ipv6_address: 2001:aaaa:bbbb:2::15
       oam6:
-        ipv4_address: 192.168.6.12
-        ipv6_address: 2001:aaaa:bbbb:6::12
+        ipv4_address: 192.168.6.15
+        ipv6_address: 2001:aaaa:bbbb:6::15
       nr5:
-        ipv4_address: 172.16.5.12
-        ipv6_address: 2001:aaaa:bbbb:10::12
+        ipv4_address: 172.16.5.15
+        ipv6_address: 2001:aaaa:bbbb:10::15
 
 #----------------------------------------
 
@@ -156,8 +144,8 @@ services:
     privileged: true
     networks:
       nr3:
-         ipv4_address: 172.16.3.15
-         ipv6_address: 2001:aaaa:bbbb:8::13
+         ipv4_address: 172.16.3.20
+         ipv6_address: 2001:aaaa:bbbb:8::20
 
         
   h2:
@@ -166,8 +154,8 @@ services:
     privileged: true
     networks:
        nr4:
-         ipv4_address: 172.16.4.15
-         ipv6_address: 2001:aaaa:bbbb:9::13
+         ipv4_address: 172.16.4.20
+         ipv6_address: 2001:aaaa:bbbb:9::20
         
   h3:
     image: alpine:latest
@@ -175,25 +163,16 @@ services:
     privileged: true
     networks:
        nr5:
-         ipv4_address: 172.16.5.15   
-         ipv6_address: 2001:aaaa:bbbb:10::13
+         ipv4_address: 172.16.5.20   
+         ipv6_address: 2001:aaaa:bbbb:10::20
+  
   server1:
     image: nginx:alpine
     privileged: true
     networks:
        nr2:
-         ipv4_address: 172.16.2.15
-         ipv6_address: 2001:aaaa:bbbb:7::11
-  server2:
-    image: nginx:alpine 
-    privileged: true
-    networks:
-       nr2:
-         ipv4_address: 172.16.2.16
-         ipv6_address: 2001:aaaa:bbbb:7::13
-
-
-         
+         ipv4_address: 172.16.2.20
+         ipv6_address: 2001:aaaa:bbbb:7::20       
 
 networks:
   oam1:
